@@ -6,7 +6,7 @@ from move_validation import get_piece_moves
 from checkmate_logic import is_checkmate, is_stalemate, is_in_check
 from utils import switch_turn
 
-pieceScore = {"K": 0, "Q": 90, "R": 50, "B": 35, "N": 30, "p": 10}
+pieceScore = {"K": 0, "Q": -90, "R": -50, "B": -35, "N": -30, "p": -10}
 knightScore =  [[-1, -1, -1, -1, -1, -1, -1, -1], 
                 [-1, -2, -2, -2, -2, -2, -2, -1], 
                 [-1, -2, -3, -3, -3, -3, -2, -1], 
@@ -65,9 +65,9 @@ blackPawnScore =   [[ 0,  0,  0,  0,  0,  0,  0,  0],
 piecePosScores =  {'N': knightScore, 'B': bishopScore, 'Q': queenScore, 'R': rookScore, "wp": whitePawnScore, "bp": blackPawnScore}
 
 
-CHECKMATE = 100000
+CHECKMATE = -100000
 STALEMATE = 0
-MAX_DEPTH = 4
+MAX_DEPTH = 2
 
 def get_all_possible_moves(board_obj, color):
     moves = []
