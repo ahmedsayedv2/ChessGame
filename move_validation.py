@@ -95,15 +95,48 @@ def is_valid_knight_move(board, start_pos, end_pos, color):
     return is_empty(target) or target[0].lower() != color[0].lower()
 
 
-def is_valid_king_move(board, start_pos, end_pos, color):
+def is_valid_king_move(board, start_pos, end_pos, color, board_obj):
     start_row, start_col = start_pos
     end_row, end_col = end_pos
 
-    if max(abs(start_row - end_row), abs(start_col - end_col)) > 1:
+    # Normal king move
+    if max(abs(start_row - end_row), abs(start_col - end_col)) == 1:
+        target = board[end_row][end_col]
+        return is_empty(target) or target[0].lower() != color[0].lower()
+
+    # Castling logic
+    if start_row != end_row or abs(start_col - end_col) != 2:
+        return False  # Not a castling attempt
+
+    if is_in_check(board_obj, color):
+        return False  # King cannot castle out of check
+
+    castling_row = 7 if color == 'white' else 0
+    kingside = end_col > start_col
+
+    # Check rights
+    side = 'K' if kingside else 'Q'
+    if not board_obj.castling_rights[color][side]:
         return False
 
-    target = board[end_row][end_col]
-    return is_empty(target) or target[0].lower() != color[0].lower()
+    rook_col = 7 if kingside else 0
+    step = 1 if kingside else -1
+
+    # Check empty squares between king and rook
+    for col in range(start_col + step, rook_col, step):
+        if not is_empty(board[castling_row][col]):
+            return False
+
+    # Check squares the king crosses are not under attack
+    for col in range(start_col, end_col + step, step):
+        test_board = simulate_move(board, (start_row, start_col), (start_row, col))
+        temp_board_obj = copy.deepcopy(board_obj)
+        temp_board_obj.board = test_board
+        if is_in_check(temp_board_obj, color):
+            return False
+
+    return True
+
 
 
 def get_piece_moves(piece, board_obj, start_pos, color, end_pos):
@@ -129,7 +162,7 @@ def get_piece_moves(piece, board_obj, start_pos, color, end_pos):
     elif piece_type == 'n':
         move_is_valid = is_valid_knight_move(board, start_pos, end_pos, color)
     elif piece_type == 'k':
-        move_is_valid = is_valid_king_move(board, start_pos, end_pos, color)
+        move_is_valid = is_valid_king_move(board, start_pos, end_pos, color, board_obj)
 
     if not move_is_valid:
         return False
