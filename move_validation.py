@@ -15,7 +15,7 @@ def simulate_move(board, start_pos, end_pos):
     return temp_board
 
 
-def is_valid_pawn_move(board, start_pos, end_pos, color):
+def is_valid_pawn_move(board_obj,board, start_pos, end_pos, color):
     start_row, start_col = start_pos
     end_row, end_col = end_pos
     direction = -1 if color == 'white' else 1
@@ -28,7 +28,9 @@ def is_valid_pawn_move(board, start_pos, end_pos, color):
                     is_empty(board[start_row + direction][start_col]) and
                     is_empty(board[end_row][end_col])):
                 return True
-
+    if abs(start_col - end_col) == 1 and end_row == start_row + direction:
+        if board_obj.en_passant_target == (end_row, end_col):
+            return True
     if abs(start_col - end_col) == 1 and end_row == start_row + direction:
         target = board[end_row][end_col]
         if not is_empty(target) and target[0].lower() != color[0].lower():
@@ -152,7 +154,7 @@ def get_piece_moves(piece, board_obj, start_pos, color, end_pos):
     move_is_valid = False
 
     if piece_type == 'p':
-        move_is_valid = is_valid_pawn_move(board, start_pos, end_pos, color)
+        move_is_valid = is_valid_pawn_move(board_obj,board, start_pos, end_pos, color)
     elif piece_type == 'r':
         move_is_valid = is_valid_rook_move(board, start_pos, end_pos, color)
     elif piece_type == 'b':
