@@ -13,17 +13,28 @@ def handle_move(board_obj, move, color):
         return False 
  
     # Castling logic 
-    if piece[1] == 'K' and abs(start_col - end_col) == 2: 
-        row = start_row 
-        if end_col == 6:  # Kingside
-            board_obj.board[row][5] = color[0] + 'R' 
-            board_obj.board[row][7] = '  ' if (row + 7) % 2 == 0 else '##' 
-        elif end_col == 2:  # Queenside
-            board_obj.board[row][3] = color[0] + 'R' 
-            board_obj.board[row][0] = '  ' if (row + 0) % 2 == 0 else '##' 
-        board_obj.castling_rights[color]['K'] = False 
-        board_obj.castling_rights[color]['Q'] = False 
- 
+    if start_row==0:
+        if piece[1] == 'K' and abs(start_col - end_col) == 2: 
+            row = start_row 
+            if end_col == 6:  # Kingside
+                board_obj.board[row][5] = color[0] + 'R' 
+                board_obj.board[row][7] = '  ' if (row + 7) % 2 == 0 else '##' 
+            elif end_col == 2:  # Queenside
+                board_obj.board[row][3] = color[0] + 'R' 
+                board_obj.board[row][0] = '  ' if (row + 0) % 2 == 0 else '##' 
+            board_obj.castling_rights[color]['K'] = False 
+            board_obj.castling_rights[color]['Q'] = False 
+    elif start_row==7:
+        if piece[1] == 'K' and abs(start_col - end_col) == 2: 
+            row = start_row 
+            if end_col == 6:  # Kingside
+                board_obj.board[row][5] = color[0] + 'R' 
+                board_obj.board[row][7] = '  ' if (row + 7) % 2 == 0 else '##' 
+            elif end_col == 2:  # Queenside
+                board_obj.board[row][3] = color[0] + 'R' 
+                board_obj.board[row][0] = '  ' if (row + 0) % 2 == 0 else '##' 
+            board_obj.castling_rights[color]['K'] = False 
+            board_obj.castling_rights[color]['Q'] = False 
     # Save board state
     board_obj.history.append(copy.deepcopy(board_obj.board)) 
 
@@ -47,11 +58,3 @@ def handle_move(board_obj, move, color):
         board_obj.en_passant_target = None
 
     return True
-
-
-
-def undo_last_move(board_obj):
-    if board_obj.history:
-        board_obj.board = board_obj.history.pop()
-        return True
-    return False
